@@ -1,5 +1,9 @@
+import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Memo } from "../types";
+import useSWR from "swr";
+import { fetcher } from "../lib/swr";
 
 type Inputs = {
   body: string;
@@ -7,9 +11,11 @@ type Inputs = {
 
 export const MemoInput = () => {
   const { register, handleSubmit } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    // TODO
-    console.log(data);
+  const { data, mutate } = useSWR<Memo[]>("/api/memos", fetcher);
+  const onSubmit: SubmitHandler<Inputs> = async (inputs) => {
+    const response = await axios.post<Memo>("/api/memos", inputs);
+    const memo = response.data;
+    mutate([...(data ?? []), memo]);
   };
 
   return (

@@ -7,6 +7,11 @@ module Api
       render json: memos
     end
 
+    def create
+      memo = Memo.create(body: params[:body])
+      render json: memo
+    end
+
   end
 
 end
